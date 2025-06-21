@@ -44,8 +44,8 @@ class LC3_VM:
         self.registers = {
             "R0": 0,
             "R1": 0,
-            "R2": 0,
-            "R3": 0,
+            "R2": 0x0005,
+            "R3": 0x000A,
             "R4": 0,
             "R5": 0,
             "R6": 0,
@@ -62,11 +62,14 @@ class LC3_VM:
             print(f"{i}: {nibbles[0]:04b} {nibbles[1]:04b} {nibbles[2]:04b} {nibbles[3]:04b}")
     
     def run(self):
-        self.memory[0x3000] = 0xF025
+        self.memory[0x3000] = 0x12A5 # Add R1, R2, #5
+        self.memory[0x3001] = 0xF025 # HALT
+
         while self.running:
             self.dump()
             # 1. Fetch
             current_instruction = self.memory[self.registers["PC"]]
+            print(bin(current_instruction))
 
             # 2. Increment Program counter
             self.registers["PC"] += 1
@@ -75,21 +78,24 @@ class LC3_VM:
             opcode = current_instruction >> 12
 
             match opcode:
-                case 0xF:
+                case Opcodes.TRAP:
                     print("TRAP")
                     trapvect8 = current_instruction & 0xFF
                     if trapvect8 == 0x25: 
-                        print("HAULT")
+                        print("HALT")
                         self.running = False
-                case 0x5:
+                case Opcodes.AND:
                     print("AND")
-                case 0x1:
-                    if current_instruction >> 4 & 0b1 == 0:
-                        print("DR = SR1 + SR2;")
-                        pass
+                case Opcodes.ADD:
+                    DR = 'R' + str(current_instruction >> 9 & 0b111)
+                    SR1 = 'R' + str(current_instruction >> 6 & 0b111)
+
+                    if current_instruction >> 5 & 0b1 == 0:
+                        SR2 = 'R' + str(current_instruction & 0b111)
+                        self.registers[DR] = self.registers[SR1] + self.registers[SR2]
                     else:
-                        print("DR = SR1 + SEXT(imm5);")
-                        pass
+                        imm5 = int(current_instruction & 0b11111)
+                        self.registers[DR] = self.registers[SR1] + imm5 
 
 vm = LC3_VM()
 vm.run()
