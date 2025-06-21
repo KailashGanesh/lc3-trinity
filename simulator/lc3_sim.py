@@ -62,7 +62,7 @@ class LC3_VM:
             print(f"{i}: {nibbles[0]:04b} {nibbles[1]:04b} {nibbles[2]:04b} {nibbles[3]:04b}")
     
     def run(self):
-        self.memory[0x3000] = 0x12A5 # Add R1, R2, #5
+        self.memory[0x3000] = 0x12BF # ADD R1, R2, #-1
         self.memory[0x3001] = 0xF025 # HALT
 
         while self.running:
@@ -84,8 +84,10 @@ class LC3_VM:
                     if trapvect8 == 0x25: 
                         print("HALT")
                         self.running = False
+
                 case Opcodes.AND:
                     print("AND")
+
                 case Opcodes.ADD:
                     DR = 'R' + str(current_instruction >> 9 & 0b111)
                     SR1 = 'R' + str(current_instruction >> 6 & 0b111)
@@ -94,8 +96,15 @@ class LC3_VM:
                         SR2 = 'R' + str(current_instruction & 0b111)
                         self.registers[DR] = self.registers[SR1] + self.registers[SR2]
                     else:
-                        imm5 = int(current_instruction & 0b11111)
-                        self.registers[DR] = self.registers[SR1] + imm5 
+                        print(int(current_instruction & 0b11111))
+                        print(bin(current_instruction & 0b11111))
+                        imm5 = current_instruction & 0b11111
+                        is_negative = imm5 >> 4 & 0b1
+                        print(bin(self.registers[SR1]), bin(imm5 ))
+                        if is_negative:
+                            imm5 = imm5 - 32 # convert it to proper value
+                        self.registers[DR] = self.registers[SR1] + int(imm5)
+                        print(imm5)
 
 vm = LC3_VM()
 vm.run()
