@@ -81,14 +81,10 @@ class LC3_VM:
             print(f"{i}: {nibbles[0]:04b} {nibbles[1]:04b} {nibbles[2]:04b} {nibbles[3]:04b}")
     
     def run(self):
-        self.memory[0x3000] = 0x12BF # ADD R1, R2, #-1
-        self.memory[0x3001] = 0xF025 # HALT
-
         while self.running:
-            self.dump()
+            # self.dump()
             # 1. Fetch
             current_instruction = self.memory[self.registers["PC"]]
-            print(bin(current_instruction))
 
             # 2. Increment Program counter
             self.registers["PC"] += 1
@@ -98,10 +94,8 @@ class LC3_VM:
 
             match opcode:
                 case Opcodes.TRAP:
-                    print("TRAP")
                     trapvect8 = current_instruction & 0xFF
                     if trapvect8 == 0x25: 
-                        print("HALT")
                         self.running = False
 
                 case Opcodes.AND:
@@ -162,5 +156,6 @@ class LC3_VM:
                         self.registers[DR] = self.memory[result]
                         self.update_cond_flag(self.registers[DR])
 
-vm = LC3_VM()
-vm.run()
+if __name__ == "__main__":
+    vm = LC3_VM()
+    vm.run()
