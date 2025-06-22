@@ -128,19 +128,39 @@ class LC3_VM:
 
                     if current_instruction >> 5 & 0b1 == 0:
                         SR2 = 'R' + str(current_instruction & 0b111)
-                        self.registers[DR] = self.registers[SR1] + self.registers[SR2]
+                        result = self.registers[SR1] + self.registers[SR2]
                     else:
-                        print(int(current_instruction & 0b11111))
-                        print(bin(current_instruction & 0b11111))
                         imm5 = current_instruction & 0b11111
                         is_negative = imm5 >> 4 & 0b1
-                        print(bin(self.registers[SR1]), bin(imm5 ))
                         if is_negative:
                             imm5 = imm5 - 32 # 2^5 = 32
-                        self.registers[DR] = self.registers[SR1] + int(imm5)
-                        print(imm5)
-                    
+                        result = self.registers[SR1] + int(imm5)
+ 
+                    self.registers[DR] = result & 0xFFFF
                     self.update_cond_flag(self.registers[DR])
+                
+                case Opcodes.NOT:
+                    DR = 'R' + str(current_instruction >> 9 & 0b111)
+                    SR = 'R' + str(current_instruction >> 6 & 0b111)
+                    
+                    self.registers[DR] = self.registers[SR] ^ 0xFFFF
+
+                    self.update_cond_flag(self.registers[DR])
+                
+                case Opcodes.LD:
+                    DR = 'R' + str(current_instruction >> 9 & 0b111)
+                    PCoffset9 = current_instruction & 0b111111111
+
+                    if (PCoffset9 >> 8) & 1:
+                        PCoffset9 |= 0xFE00
+
+                    result = self.registers["PC"] + PCoffset9 
+
+                    if result < 0x3000:
+                        print('Not Allowed')
+                    else:
+                        self.registers[DR] = self.memory[result]
+                        self.update_cond_flag(self.registers[DR])
 
 vm = LC3_VM()
 vm.run()
