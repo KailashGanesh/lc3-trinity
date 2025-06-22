@@ -1,0 +1,51 @@
+{
+  "instruction": "LD",
+  "tests": [
+    {
+      "name": "LD with a positive offset, loading a negative value",
+      "description": "Tests LD R0, LABEL where LABEL is at PC + 0x25. The value loaded is negative.",
+      "initial_state": {
+        "registers": {
+          "PC": "0x3000",
+          "COND": 0
+        },
+        "memory": {
+          "0x3000": "0x2025",
+          "0x3001": "0xF025",
+          "0x3026": "0xABCD"
+        }
+      },
+      "final_state": {
+        "registers": {
+          "R0": "0xABCD",
+          "PC": "0x3002",
+          "COND": 4
+        },
+        "memory": {}
+      }
+    },
+    {
+      "name": "LD with a negative offset, loading a positive value",
+      "description": "Tests LD R1, LABEL where LABEL is at PC - 0x10. The value loaded is positive.",
+      "initial_state": {
+        "registers": {
+          "PC": "0x3020",
+          "COND": 0
+        },
+        "memory": {
+          "0x3010": "0x1234",
+          "0x3020": "0x22EF",
+          "0x3021": "0xF025"
+        }
+      },
+      "final_state": {
+        "registers": {
+          "R1": "0x1234",
+          "PC": "0x3022",
+          "COND": 1
+        },
+        "memory": {}
+      }
+    }
+  ]
+}
