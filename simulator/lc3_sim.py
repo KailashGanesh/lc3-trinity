@@ -35,6 +35,11 @@ class Opcodes(IntEnum):
     # Reserved Opcode
     RESERVED = 0xD # This opcode is unused
 
+class ConditionFlags:
+    P = 1 << 0
+    Z = 1 << 1
+    N = 1 << 2
+
 class LC3_VM:
     def __init__(self):
         # Memory
@@ -54,7 +59,21 @@ class LC3_VM:
             "COND": 0,
         }
 
+
         self.running = True
+
+    def update_cond_flag(self, result):
+
+        # Make result into 16 bit for the sign check
+        result &= 0xFFFF
+
+        if result == 0:
+            self.registers["COND"] = ConditionFlags.Z
+        elif (result >> 15) & 1:
+            self.registers["COND"] = ConditionFlags.N
+        else:
+            self.registers["COND"] = ConditionFlags.P
+
 
     def dump(self):
         for i in self.registers.keys():
@@ -86,7 +105,22 @@ class LC3_VM:
                         self.running = False
 
                 case Opcodes.AND:
-                    print("AND")
+                    DR = 'R' + str(current_instruction >> 9 & 0b111)
+                    SR1 = 'R' + str(current_instruction >> 6 & 0b111)
+
+                    if current_instruction >> 5 & 0b1 == 0:
+                        SR2 = 'R' + str(current_instruction & 0b111)
+                        self.registers[DR] = self.registers[SR1] & self.registers[SR2]
+                    else:
+                        imm5 = current_instruction & 0b11111
+                        is_negative = imm5 >> 4 & 0b1
+
+                        if is_negative:
+                            imm5 = imm5 | 0xFFE0
+
+                        self.registers[DR] = self.registers[SR1] & imm5
+                    
+                    self.update_cond_flag(self.registers[DR])
 
                 case Opcodes.ADD:
                     DR = 'R' + str(current_instruction >> 9 & 0b111)
@@ -102,9 +136,11 @@ class LC3_VM:
                         is_negative = imm5 >> 4 & 0b1
                         print(bin(self.registers[SR1]), bin(imm5 ))
                         if is_negative:
-                            imm5 = imm5 - 32 # convert it to proper value
+                            imm5 = imm5 - 32 # 2^5 = 32
                         self.registers[DR] = self.registers[SR1] + int(imm5)
                         print(imm5)
+                    
+                    self.update_cond_flag(self.registers[DR])
 
 vm = LC3_VM()
 vm.run()
