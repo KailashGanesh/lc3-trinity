@@ -143,17 +143,37 @@ class LC3_VM:
                 
                 case Opcodes.LD:
                     DR = 'R' + str(current_instruction >> 9 & 0b111)
-                    PCoffset9 = current_instruction & 0b111111111
+                    PCoffset9 = current_instruction & 0x1FF
 
                     if (PCoffset9 >> 8) & 1:
                         PCoffset9 |= 0xFE00
 
-                    result = self.registers["PC"] + PCoffset9 
+                    result = self.registers["PC"] + PCoffset9 & 0xFFFF 
 
                     if result < 0x3000:
                         print('Not Allowed')
+                        break
                     else:
                         self.registers[DR] = self.memory[result]
+                        self.update_cond_flag(self.registers[DR])
+
+                case Opcodes.LDI:
+                    DR = 'R' + str(current_instruction >> 9 & 0b111)
+                    PCoffset9 = current_instruction & 0x1FF
+
+                    if (PCoffset9 >> 8) & 1:
+                        PCoffset9 |= 0xFE00
+
+                    first_address = self.registers["PC"] + PCoffset9 & 0xFFFF 
+                    
+                    value = self.memory[self.memory[first_address]]
+
+                    if first_address < 0x3000 and value < 0x3000:
+                        print('Not Allowed')
+                        break
+
+                    else:
+                        self.registers[DR] = value
                         self.update_cond_flag(self.registers[DR])
 
 if __name__ == "__main__":
