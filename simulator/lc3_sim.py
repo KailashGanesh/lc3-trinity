@@ -175,6 +175,83 @@ class LC3_VM:
                     else:
                         self.registers[DR] = value
                         self.update_cond_flag(self.registers[DR])
+                case Opcodes.LDR:
+                    DR = 'R' + str(current_instruction >> 9 & 0b111)
+                    BaseR = 'R' + str(current_instruction >> 6 & 0b111)
+                    offset6 = current_instruction & 0b111111
+
+                    if (offset6 >> 5) & 1:
+                        offset6 |= 0xFFC0
+
+                    self.registers[DR] = self.memory[self.registers[BaseR] + offset6 & 0xFFFF]
+                    self.update_cond_flag(self.registers[DR])
+                
+                case Opcodes.LEA:
+                    DR = 'R' + str(current_instruction >> 9 & 0b111)
+                    PCoffset9 = current_instruction & 0x1FF
+
+                    if (PCoffset9 >> 8) & 1:
+                        PCoffset9 |= 0xFE00
+
+                    self.registers[DR] = self.registers["PC"] + PCoffset9 & 0xFFFF
+                    self.update_cond_flag(self.registers[DR])
+                
+                case Opcodes.RET:
+                    self.registers["PC"] = self.registers["R7"]
+
+                # case Opcodes.RTI:
+                #     if (PSR[15] == 0):
+                #         self.registers["PC"] = self.memory[self.registers["R6"]]
+                #         self.registers["R6"] += 1
+                #         TEMP = self.memory[self.registers["R6"]]
+                #         self.registers["R6"] += 1
+                #         PSR = TEMP
+                #     else:
+                #         print("RTI not allowed in user mode")
+                #         self.running = False
+
+                case Opcodes.ST:
+                    SR = 'R' + str(current_instruction >> 9 & 0b111)
+                    PCoffset9 = current_instruction & 0x1FF
+
+                    if (PCoffset9 >> 8) & 1:
+                        PCoffset9 |= 0xFE00
+
+                    result = self.registers["PC"] + PCoffset9 & 0xFFFF 
+
+                    if result < 0x3000:
+                        print('Not Allowed')
+                        break
+                    else:
+                        self.memory[result] = self.registers[SR]
+                
+                case Opcodes.STI:
+                    SR = 'R' + str(current_instruction >> 9 & 0b111)
+                    PCoffset9 = current_instruction & 0x1FF
+                    if (PCoffset9 >> 8) & 1:
+                        PCoffset9 |= 0xFE00
+
+                    first_address = self.registers["PC"] + PCoffset9 & 0xFFFF
+                    result = self.memory[first_address]
+                    if first_address < 0x3000 and result < 0x3000:
+                        print('Not Allowed')
+                    else:
+                        self.memory[result] = self.registers[SR]
+                
+                case Opcodes.STR:
+                    SR = 'R' + str(current_instruction >> 9 & 0b111)
+                    BaseR = 'R' + str(current_instruction >> 6 & 0b111)
+                    offset6 = current_instruction & 0b111111
+
+                    if (offset6 >> 5) & 1:
+                        offset6 |= 0xFFC0
+
+                    self.memory[self.registers[BaseR] + offset6 & 0xFFFF] = self.registers[SR]
+                
+                case _:
+                    print(f"Unknown opcode: {bin(opcode)}")
+                    self.running = False
+                
 
 if __name__ == "__main__":
     vm = LC3_VM()
