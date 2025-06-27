@@ -1,0 +1,23 @@
+{
+  "instruction": "TRAP_GETC",
+  "tests": [
+    {
+      "name": "Test TRAP GETC instruction",
+      "description": "Tests the TRAP x20 (GETC) instruction fetch and execution without user input.",
+      "initial_state": {
+        "registers": {
+          "PC": "0x3000"
+        },
+        "memory": {
+          "0x3000": "0xF020"
+        }
+      },
+      "final_state": {
+        "registers": {
+          "PC": "0x3001"
+        },
+        "memory": {}
+      }
+    }
+  ]
+}

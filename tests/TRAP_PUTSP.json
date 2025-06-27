@@ -1,0 +1,23 @@
+{
+  "instruction": "TRAP_PUTSP",
+  "tests": [
+    {
+      "name": "Test TRAP PUTSP instruction",
+      "description": "Tests the TRAP x24 (PUTSP) instruction fetch and execution.",
+      "initial_state": {
+        "registers": {
+          "PC": "0x3000"
+        },
+        "memory": {
+          "0x3000": "0xF024"
+        }
+      },
+      "final_state": {
+        "registers": {
+          "PC": "0x3001"
+        },
+        "memory": {}
+      }
+    }
+  ]
+}
