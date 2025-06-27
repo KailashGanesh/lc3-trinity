@@ -1,0 +1,17 @@
+{
+  "instruction": "JSR",
+  "tests": [
+    {
+      "name": "JSR with PC offset",
+      "description": "Tests JSR with positive PC offset.",
+      "initial_state": {
+        "registers": {"PC": "0x3000"},
+        "memory": {"0x3000": "0x4802", "0x3001": "0xF025"}
+      },
+      "final_state": {
+        "registers": {"R7": "0x3001", "PC": "0x3003"},
+        "memory": {}
+      }
+    }
+  ]
+}

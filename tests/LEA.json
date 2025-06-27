@@ -1,0 +1,17 @@
+{
+  "instruction": "LEA",
+  "tests": [
+    {
+      "name": "Load effective address",
+      "description": "Tests LEA loads PC+offset into register.",
+      "initial_state": {
+        "registers": {"PC": "0x3000"},
+        "memory": {"0x3000": "0xE001", "0x3001": "0xF025"}
+      },
+      "final_state": {
+        "registers": {"R0": "0x3002", "PC": "0x3001"},
+        "memory": {}
+      }
+    }
+  ]
+}

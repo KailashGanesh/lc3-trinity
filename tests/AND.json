@@ -1,0 +1,29 @@
+{
+  "instruction": "AND",
+  "tests": [
+    {
+      "name": "Register mode, positive result",
+      "description": "Tests R1 = R2 & R3 where the result is positive.",
+      "initial_state": {
+        "registers": {"R2": 7, "R3": 3, "PC": "0x3000", "COND": 0},
+        "memory": {"0x3000": "0x5283", "0x3001": "0xF025"}
+      },
+      "final_state": {
+        "registers": {"R1": 3, "PC": "0x3002", "COND": 1},
+        "memory": {}
+      }
+    },
+    {
+      "name": "Immediate mode, zero result",
+      "description": "Tests R1 = R2 & 0 where the result is zero.",
+      "initial_state": {
+        "registers": {"R2": 5, "PC": "0x3000", "COND": 0},
+        "memory": {"0x3000": "0x52A0", "0x3001": "0xF025"}
+      },
+      "final_state": {
+        "registers": {"R1": 0, "PC": "0x3002", "COND": 2},
+        "memory": {}
+      }
+    }
+  ]
+}

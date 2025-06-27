@@ -1,0 +1,17 @@
+{
+  "instruction": "STR",
+  "tests": [
+    {
+      "name": "Store base+offset",
+      "description": "Tests STR stores R1 to memory at base+offset.",
+      "initial_state": {
+        "registers": {"R1": 77, "R2": "0x3100", "PC": "0x3000"},
+        "memory": {"0x3000": "0x7181", "0x3101": 0, "0x3001": "0xF025"}
+      },
+      "final_state": {
+        "registers": {"PC": "0x3002"},
+        "memory": {"0x3101": 77}
+      }
+    }
+  ]
+}

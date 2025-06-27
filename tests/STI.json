@@ -1,0 +1,17 @@
+{
+  "instruction": "STI",
+  "tests": [
+    {
+      "name": "Store indirect",
+      "description": "Tests STI stores R1 to memory at address pointed by memory[PC+offset].",
+      "initial_state": {
+        "registers": {"R1": 55, "PC": "0x3000"},
+        "memory": {"0x3000": "0xB001", "0x3001": "0x3100", "0x3100": "0x4000"}
+      },
+      "final_state": {
+        "registers": {"PC": "0x3001"},
+        "memory": {"0x4000": 55}
+      }
+    }
+  ]
+}
