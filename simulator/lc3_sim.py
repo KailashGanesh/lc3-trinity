@@ -26,9 +26,9 @@ class Opcodes(IntEnum):
     TRAP = 0xF  # System Call
 
     # Operate Instructions
-    ADD = 0x1      # Add
-    AND = 0x5      # Bitwise AND
-    NOT = 0x9      # Bitwise NOT
+    ADD = 0x1  # Add
+    AND = 0x5  # Bitwise AND
+    NOT = 0x9  # Bitwise NOT
 
     # Data Movement Instructions
     LD = 0x2  # Load
