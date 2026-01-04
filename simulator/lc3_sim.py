@@ -7,16 +7,16 @@ def make_nibbles(word):
     for i in range(4):
         shift = i * 4
         chunk = word >> shift & 0xF
-        nibbles.insert(0,chunk)
+        nibbles.insert(0, chunk)
     return nibbles
 
 class Opcodes(IntEnum):
-   # Control Instructions
-    BR = 0x0       # Branch
-    JMP = 0xC      # Jump (includes RET)
-    JSR = 0x4      # Jump to Subroutine (includes JSRR)
-    RTI = 0x8      # Return from Interrupt
-    TRAP = 0xF     # System Call
+    # Control Instructions
+    BR = 0x0  # Branch
+    JMP = 0xC  # Jump (includes RET)
+    JSR = 0x4  # Jump to Subroutine (includes JSRR)
+    RTI = 0x8  # Return from Interrupt
+    TRAP = 0xF  # System Call
 
     # Operate Instructions
     ADD = 0x1      # Add
@@ -24,16 +24,17 @@ class Opcodes(IntEnum):
     NOT = 0x9      # Bitwise NOT
 
     # Data Movement Instructions
-    LD = 0x2       # Load
-    LDI = 0xA      # Load Indirect
-    LDR = 0x6      # Load Base+Offset
-    LEA = 0xE      # Load Effective Address
-    ST = 0x3       # Store
-    STI = 0xB      # Store Indirect
-    STR = 0x7      # Store Base+Offset
-    
+    LD = 0x2  # Load
+    LDI = 0xA  # Load Indirect
+    LDR = 0x6  # Load Base+Offset
+    LEA = 0xE  # Load Effective Address
+    ST = 0x3  # Store
+    STI = 0xB  # Store Indirect
+    STR = 0x7  # Store Base+Offset
+
     # Reserved Opcode
-    RESERVED = 0xD # This opcode is unused
+    RESERVED = 0xD  # This opcode is unused
+
 
 class ConditionFlags:
     P = 1 << 0
@@ -45,7 +46,7 @@ class LC3_VM:
         # Memory
         self.memory = [0] * (2**16)
 
-        # Registers 
+        # Registers
         self.registers = {
             "R0": 0,
             "R1": 0,
