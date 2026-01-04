@@ -9,7 +9,7 @@
         "memory": {"0x3000": "0xE001", "0x3001": "0xF025"}
       },
       "final_state": {
-        "registers": {"R0": "0x3002", "PC": "0x3001"},
+        "registers": {"R0": "0x3002", "PC": "0x3002"},
         "memory": {}
       }
     }
