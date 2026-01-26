@@ -243,8 +243,11 @@ class LC3_VM:
             self.registers[SR]
         )
 
-    def op_ret(self, current_instruction):
-        self.registers["PC"] = self.registers["R7"]
+    def op_jmp(self, current_instruction):
+        """RET is just JMP but with PC = R7 always"""
+        BaseR = (current_instruction >> 6) & 0b111  # number of registor
+        BaseR = "R" + str(BaseR)  # needs to be a registor name
+        self.registers["PC"] = self.registers[BaseR]
 
     def op_rti(self, current_instruction):
         if PSR[15] == 0:
