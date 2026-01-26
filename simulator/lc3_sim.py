@@ -1,4 +1,4 @@
-from enum import Flag, IntEnum
+from enum import IntEnum
 
 
 def sign_extend(value, bit_count):
@@ -102,10 +102,6 @@ class LC3_VM:
             self.registers[DR] = self.registers[SR1] & self.registers[SR2]
         else:
             imm5 = current_instruction & 0b11111
-            # is_negative = imm5 >> 4 & 0b1
-
-            # if is_negative:
-            #     imm5 = imm5 | 0xFFE0
 
             self.registers[DR] = self.registers[SR1] & sign_extend(imm5, 5)
 
@@ -120,9 +116,6 @@ class LC3_VM:
             result = self.registers[SR1] + self.registers[SR2]
         else:
             imm5 = current_instruction & 0b11111
-            # is_negative = imm5 >> 4 & 0b1
-            # if is_negative:
-            #     imm5 = imm5 - 32  # 2^5 = 32
             result = self.registers[SR1] + sign_extend(imm5, 5)
 
         self.registers[DR] = result & 0xFFFF
@@ -140,10 +133,6 @@ class LC3_VM:
         DR = "R" + str(current_instruction >> 9 & 0b111)
         PCoffset9 = current_instruction & 0x1FF
 
-        # if (PCoffset9 >> 8) & 1:
-        #     PCoffset9 |= 0xFE00
-
-        # result = self.registers["PC"] + PCoffset9 & 0xFFFF
         result = (self.registers["PC"] + sign_extend(PCoffset9, 9)) & 0xFFFF
 
         if result < 0x3000:
@@ -157,10 +146,6 @@ class LC3_VM:
         DR = "R" + str(current_instruction >> 9 & 0b111)
         PCoffset9 = current_instruction & 0x1FF
 
-        # if (PCoffset9 >> 8) & 1:
-        #     PCoffset9 |= 0xFE00
-
-        # first_address = self.registers["PC"] + PCoffset9 & 0xFFFF
         first_address = (self.registers["PC"] + sign_extend(PCoffset9, 9)) & 0xFFFF
 
         value = self.memory[self.memory[first_address]]
@@ -179,13 +164,6 @@ class LC3_VM:
         BaseR = "R" + str(current_instruction >> 6 & 0b111)
         offset6 = current_instruction & 0b111111
 
-        # if (offset6 >> 5) & 1:
-        #     offset6 |= 0xFFC0
-
-        # self.registers[DR] = self.memory[
-        #     self.registers[BaseR] + offset6 & 0xFFFF
-        # ]
-
         self.registers[DR] = self.memory[
             (self.registers[BaseR] + sign_extend(offset6, 6)) & 0xFFFF
         ]
@@ -195,19 +173,12 @@ class LC3_VM:
         DR = "R" + str(current_instruction >> 9 & 0b111)
         PCoffset9 = current_instruction & 0x1FF
 
-        # if (PCoffset9 >> 8) & 1:
-        #     PCoffset9 |= 0xFE00
-
-        # self.registers[DR] = self.registers["PC"] + PCoffset9 & 0xFFFF
         self.registers[DR] = (self.registers["PC"] + sign_extend(PCoffset9, 9)) & 0xFFFF
         self.update_cond_flag(self.registers[DR])
 
     def op_st(self, current_instruction):
         SR = "R" + str(current_instruction >> 9 & 0b111)
         PCoffset9 = current_instruction & 0x1FF
-
-        # if (PCoffset9 >> 8) & 1:
-        #     PCoffset9 |= 0xFE00
 
         result = (self.registers["PC"] + sign_extend(PCoffset9, 9)) & 0xFFFF
 
@@ -221,9 +192,6 @@ class LC3_VM:
         SR = "R" + str(current_instruction >> 9 & 0b111)
         PCoffset9 = current_instruction & 0x1FF
 
-        # if (PCoffset9 >> 8) & 1:
-        #     PCoffset9 |= 0xFE00
-
         first_address = (self.registers["PC"] + sign_extend(PCoffset9, 9)) & 0xFFFF
         result = self.memory[first_address]
         if first_address < 0x3000 and result < 0x3000:
@@ -235,9 +203,6 @@ class LC3_VM:
         SR = "R" + str(current_instruction >> 9 & 0b111)
         BaseR = "R" + str(current_instruction >> 6 & 0b111)
         offset6 = current_instruction & 0b111111
-
-        # if (offset6 >> 5) & 1:
-        #     offset6 |= 0xFFC0
 
         self.memory[(self.registers[BaseR] + sign_extend(offset6, 6)) & 0xFFFF] = (
             self.registers[SR]
