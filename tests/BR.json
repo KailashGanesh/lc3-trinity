@@ -5,11 +5,20 @@
       "name": "Branch taken",
       "description": "Tests branch when condition is met.",
       "initial_state": {
-        "registers": {"PC": "0x3000", "COND": 2},
-        "memory": {"0x3000": "0x0402", "0x3001": "0xF025"}
+        "registers": {
+          "PC": "0x3000",
+          "COND": 2
+        },
+        "memory": {
+          "0x3000": "0x0401",
+          "0x3003": "0xF025"
+        }
       },
       "final_state": {
-        "registers": {"PC": "0x3003", "COND": 2},
+        "registers": {
+          "PC": "0x3004",
+          "COND": 2
+        },
         "memory": {}
       }
     },
@@ -17,11 +26,20 @@
       "name": "Branch not taken",
       "description": "Tests branch when condition is not met.",
       "initial_state": {
-        "registers": {"PC": "0x3000", "COND": 1},
-        "memory": {"0x3000": "0x0402", "0x3001": "0xF025"}
+        "registers": {
+          "PC": "0x3000",
+          "COND": 1
+        },
+        "memory": {
+          "0x3000": "0x0402",
+          "0x3001": "0xF025"
+        }
       },
       "final_state": {
-        "registers": {"PC": "0x3001", "COND": 1},
+        "registers": {
+          "PC": "0x3002",
+          "COND": 1
+        },
         "memory": {}
       }
     }

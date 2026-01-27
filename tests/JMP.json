@@ -5,11 +5,19 @@
       "name": "Jump to address in base register",
       "description": "Tests PC = R3.",
       "initial_state": {
-        "registers": {"R3": "0x3100", "PC": "0x3000"},
-        "memory": {"0x3000": "0xC0C0", "0x3001": "0xF025"}
+        "registers": {
+          "R3": "0x3100",
+          "PC": "0x3000"
+        },
+        "memory": {
+          "0x3000": "0xC0C0",
+          "0x3100": "0xF025"
+        }
       },
       "final_state": {
-        "registers": {"PC": "0x3100"},
+        "registers": {
+          "PC": "0x3101"
+        },
         "memory": {}
       }
     }
