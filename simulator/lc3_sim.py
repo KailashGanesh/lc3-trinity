@@ -22,7 +22,6 @@ class Opcodes(IntEnum):
     BR = 0x0  # Branch
     JMP = 0xC  # Jump (includes RET)
     JSR = 0x4  # Jump to Subroutine (includes JSRR)
-    RTI = 0x8  # Return from Interrupt
     TRAP = 0xF  # System Call
 
     # Operate Instructions
@@ -40,6 +39,7 @@ class Opcodes(IntEnum):
     STR = 0x7  # Store Base+Offset
 
     # Reserved Opcode
+    RTI = 0x8  # Return from Interrupt *unused*
     RESERVED = 0xD  # This opcode is unused
 
 
@@ -58,8 +58,8 @@ class LC3_VM:
         self.registers = {
             "R0": 0,
             "R1": 0,
-            "R2": 0x0005,
-            "R3": 0x000A,
+            "R2": 0,
+            "R3": 0,
             "R4": 0,
             "R5": 0,
             "R6": 0,
@@ -214,17 +214,6 @@ class LC3_VM:
         BaseR = "R" + str(BaseR)  # needs to be a registor name
         self.registers["PC"] = self.registers[BaseR]
 
-    def op_rti(self, current_instruction):
-        if PSR[15] == 0:
-            self.registers["PC"] = self.memory[self.registers["R6"]]
-            self.registers["R6"] += 1
-            TEMP = self.memory[self.registers["R6"]]
-            self.registers["R6"] += 1
-            PSR = TEMP
-        else:
-            print("RTI not allowed in user mode")
-            self.running = False
-
     def op_jsr(self, current_instruction):
         TEMP = self.registers["PC"]
         bit_11 = (current_instruction >> 11) & 0b1
@@ -298,11 +287,6 @@ class LC3_VM:
                 case Opcodes.JMP:
                     pass
 
-                # case Opcodes.RET:
-                #     self.op_ret(current_instruction)
-
-                # case Opcodes.RTI:
-                #   self.op_rti(current_instruction)
 
                 case Opcodes.ST:
                     self.op_st(current_instruction)
