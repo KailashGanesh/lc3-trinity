@@ -254,7 +254,7 @@ class LC3_VM:
             current_instruction = self.memory[self.registers["PC"]]
 
             # 2. Increment Program counter
-            self.registers["PC"] += 1
+            self.registers["PC"] = (self.registers["PC"] + 1) & 0xFFFF
 
             # 3. Decode & Execute
             opcode = current_instruction >> 12
@@ -285,8 +285,10 @@ class LC3_VM:
                     self.op_lea(current_instruction)
 
                 case Opcodes.JMP:
-                    pass
+                    self.op_jmp(current_instruction)
 
+                case Opcodes.JSR:
+                    self.op_jsr(current_instruction)
 
                 case Opcodes.ST:
                     self.op_st(current_instruction)
