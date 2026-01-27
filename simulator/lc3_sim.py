@@ -225,6 +225,39 @@ class LC3_VM:
             print("RTI not allowed in user mode")
             self.running = False
 
+    def op_jsr(self, current_instruction):
+        TEMP = self.registers["PC"]
+        bit_11 = (current_instruction >> 11) & 0b1
+
+        if bit_11 == 0b0:
+            # JSRR - BaseR mode
+            BaseR = (current_instruction >> 6) & 0b111
+            BaseR = "R" + str(BaseR)
+            self.registers["PC"] = self.registers[BaseR]
+        else:
+            # JSR - PCoffset11 mode
+            PCoffset11 = current_instruction & 0x7FF
+            self.registers["PC"] = (
+                self.registers["PC"] + sign_extend(PCoffset11, 11)
+            ) & 0xFFFF
+
+        self.registers["R7"] = TEMP
+
+    def op_br(self, current_instruction):
+        PCoffset9 = current_instruction & 0x1FF
+        p = (current_instruction >> 9) & 0b1
+        z = (current_instruction >> 10) & 0b1
+        n = (current_instruction >> 11) & 0b1
+
+        if (
+            (n and self.registers["COND"] == ConditionFlags.N)
+            or (z and self.registers["COND"] == ConditionFlags.Z)
+            or (p and self.registers["COND"] == ConditionFlags.P)
+        ):
+            self.registers["PC"] = (
+                self.registers["PC"] + sign_extend(PCoffset9, 9)
+            ) & 0xFFFF
+
     def run(self):
         while self.running:
             # self.dump()
@@ -279,6 +312,9 @@ class LC3_VM:
 
                 case Opcodes.STR:
                     self.op_str(current_instruction)
+
+                case Opcodes.BR:
+                    self.op_br(current_instruction)
 
                 case _:
                     print(f"Unknown opcode: {bin(opcode)}")
