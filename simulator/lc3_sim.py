@@ -135,12 +135,8 @@ class LC3_VM:
 
         result = (self.registers["PC"] + sign_extend(PCoffset9, 9)) & 0xFFFF
 
-        if result < 0x3000:
-            print("Not Allowed")
-            self.running = False
-        else:
-            self.registers[DR] = self.memory[result]
-            self.update_cond_flag(self.registers[DR])
+        self.registers[DR] = self.memory[result]
+        self.update_cond_flag(self.registers[DR])
 
     def op_ldi(self, current_instruction):
         DR = "R" + str(current_instruction >> 9 & 0b111)
@@ -150,14 +146,8 @@ class LC3_VM:
 
         value = self.memory[self.memory[first_address]]
 
-        if first_address < 0x3000 and value < 0x3000:
-            print("Not Allowed")
-            self.running = False
-
-        else:
-            self.registers[DR] = value
-
-            self.update_cond_flag(self.registers[DR])
+        self.registers[DR] = value
+        self.update_cond_flag(self.registers[DR])
 
     def op_ldr(self, current_instruction):
         DR = "R" + str(current_instruction >> 9 & 0b111)
@@ -182,11 +172,7 @@ class LC3_VM:
 
         result = (self.registers["PC"] + sign_extend(PCoffset9, 9)) & 0xFFFF
 
-        if result < 0x3000:
-            print("Not Allowed")
-            self.running = False
-        else:
-            self.memory[result] = self.registers[SR]
+        self.memory[result] = self.registers[SR]
 
     def op_sti(self, current_instruction):
         SR = "R" + str(current_instruction >> 9 & 0b111)
@@ -194,10 +180,7 @@ class LC3_VM:
 
         first_address = (self.registers["PC"] + sign_extend(PCoffset9, 9)) & 0xFFFF
         result = self.memory[first_address]
-        if first_address < 0x3000 and result < 0x3000:
-            print("Not Allowed")
-        else:
-            self.memory[result] = self.registers[SR]
+        self.memory[result] = self.registers[SR]
 
     def op_str(self, current_instruction):
         SR = "R" + str(current_instruction >> 9 & 0b111)
